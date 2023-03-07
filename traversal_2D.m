@@ -43,9 +43,9 @@ function visitied_voxels = traversal_2D(ray_start,ray_end)
         if(tMaxX > 1 && tMaxY > 1) 
             break;
         end
-%         if(voxel(1) == ray_end(1) && voxel(2) == ray_end(2) )
-%             break;
-%         end
+        if(voxel(1) == ray_end(1) && voxel(2) == ray_end(2) )
+            break;
+        end
 %       添加体素进列表
         visitied_voxels = [visitied_voxels;voxel];
 %       先跳x轴还是y轴

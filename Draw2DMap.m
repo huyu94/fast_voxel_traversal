@@ -15,9 +15,9 @@ colormap(cmap);
 
 %% 画栅格图
 [rows,cols] = size(map);
-c = (visitied_voxels(:,1)-1) * rows + visitied_voxels(:,2);
-c = cast(c,'int16');
-map(c') = 4;
+% c = (visitied_voxels(:,1)-1) * rows + visitied_voxels(:,2);
+% c = cast(c,'int16');
+% map(c') = 4;
 
 
 image(1.5,1.5,map);

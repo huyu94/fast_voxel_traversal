@@ -1,8 +1,10 @@
-function visitied_voxels = traversal_2D(ray_start,ray_end)
+function visitied_voxels = traversal_2D(ray_start,ray_end,boundary)
+%   boundary = [x_min,x_max,y_min,y_max,z_min,z_max]
 %   初始设置
     voxel = zeros(1,2);
     visitied_voxels = [];
     grid_size = 1;
+    last_voxel = floor(ray_end);
 
 %   axis X
     dx = ray_end(1)-ray_start(1);
@@ -12,7 +14,11 @@ function visitied_voxels = traversal_2D(ray_start,ray_end)
     else
         tDeltaX = 100000.0;
     end
-    tMaxX = tDeltaX * FRAC(ray_start(1),grid_size);
+    if(stepX > 0)
+        tMaxX = tDeltaX * FRAC1(ray_start(1),grid_size);
+    else
+        tMaxX = tDeltaX * FRAC0(ray_start(1),grid_size);
+    end
     voxel(1) = floor(ray_start(1));
 
 %   axis Y
@@ -23,7 +29,11 @@ function visitied_voxels = traversal_2D(ray_start,ray_end)
     else
         tDeltaY = 100000.0;
     end
-    tMaxY = tDeltaY * FRAC(ray_start(2),grid_size);
+    if(stepY >= 0)
+        tMaxY = tDeltaY * FRAC1(ray_start(2),grid_size);
+    else
+        tMaxY = tDeltaY * FRAC0(ray_start(2),grid_size);
+    end
     voxel(2) = floor(ray_start(2));
 
 % %   axis Z
@@ -37,17 +47,13 @@ function visitied_voxels = traversal_2D(ray_start,ray_end)
 %     tMaxZ = tDeltaZ * FRAC(ray_start(3),grid_size);
 %     voxel(3) = floor(ray_start(3));
 
+    if(stepX == 0 && stepY == 0)
+        return;
+    end
+    visitied_voxels = [visitied_voxels,voxel];
+
 %   光线投射遍历
     while(true)
-%       如果光线到达了终点，就终止  
-        if(tMaxX > 1 && tMaxY > 1) 
-            break;
-        end
-        if(voxel(1) == ray_end(1) && voxel(2) == ray_end(2) )
-            break;
-        end
-%       添加体素进列表
-        visitied_voxels = [visitied_voxels;voxel];
 %       先跳x轴还是y轴
         if(tMaxX < tMaxY)
             voxel(1) = voxel(1) + stepX;
@@ -56,14 +62,18 @@ function visitied_voxels = traversal_2D(ray_start,ray_end)
             voxel(2) = voxel(2) + stepY;
             tMaxY = tMaxY + tDeltaY;
         end
-    end   
+%       添加体素进列表
+        visitied_voxels = [visitied_voxels;voxel];
+        if(voxel(1) == last_voxel(1) && voxel(2) == last_voxel(2) )
+            break;
+        end
+%       如果光线到达了终点，就终止  
+        if(tMaxX > 1 && tMaxY > 1) 
+            break;
+        end
+
+    end
+
 end
 
 
-function result = FRAC(x,grid_size)
-    if(x < 0)
-        result = FRAC(-x,grid_size);
-    else
-        result = (x - floor(x))/grid_size;
-    end    
-end
